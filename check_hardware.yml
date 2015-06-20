@@ -22,7 +22,13 @@
       when: cores_per_cpu is defined and
             ansible_processor_cores != cores_per_cpu
 
+    - name: Check total memory (mb)
+      fail:
+        msg="Total memory (mb) '{{ ansible_memtotal_mb }}' does not match expected value '{{ total_memory_mb }}'"
+      when: total_memory_mb is defined and
+            ansible_memtotal_mb != total_memory_mb
     - name: Check virtualization type
+
       fail:
         msg="Virtualization type '{{ ansible_virtualization_type }}' does not match expected value '{{ virtualization_type }}'"
       when: virtualization_type is defined and
@@ -69,40 +75,3 @@
         msg="selinux status '{{ ansible_selinux.status }}' does not match expected value '{{ selinux_status }}'"
       when: selinux_status is defined and
             ansible_selinux.status != selinux_status
-
-    - name: Check total memory (mb)
-      fail:
-        msg="Total memory (mb) '{{ ansible_memtotal_mb }}' does not match expected value '{{ total_memory_mb }}'"
-      when: total_memory_mb is defined and
-            ansible_memtotal_mb != total_memory_mb
-
-#    - name: print ansible facts
-#      lineinfile:
-#        line="ansible_memtotal_mb {{ ansible_memtotal_mb }}"
-#        dest=/tmp/hostinfo.txt
-#        create=yes
-#
-#    - name: get hard drive facts
-#      shell: df -h
-#      register: hard_drives
-#
-#    - name: print hard drive facts
-#      lineinfile:
-#        line="hard_drive {{ hard_drives.stdout }}"
-#        dest=/tmp/hostinfo.txt
-#        create=yes
-#
-#    - name: Fetch hostinfo.txt file
-#      fetch:
-#        src=/tmp/hostinfo.txt
-#        dest=./
-#
-#    - debug:
-#        var=hostvars[inventory_hostname]
-#      register: all_facts
-#
-#    - shell: "echo {{ all_facts|to_json }} > /tmp/all_facts.json"
-#
-#    - fetch:
-#        src=/tmp/all_facts.json
-#        dest=./

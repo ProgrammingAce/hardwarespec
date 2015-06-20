@@ -4,94 +4,89 @@
   sudo: no
   gather_facts: yes
   tasks:
-    - name: Create output folder
-      local_action: file
-        path=./{{ ansible_hostname }}
-        state=directory
-
     - name: Destroy exsting spec file
       local_action: file
-        path=./{{ ansible_hostname }}/{{ ansible_hostname }}.yml
+        path=./host_vars/{{ ansible_hostname }}.yml
         state=absent
 
     - name: Create spec file
       local_action: file
-        path=./{{ ansible_hostname }}/{{ ansible_hostname }}.yml
+        path=./host_vars/{{ ansible_hostname }}.yml
         state=touch
 
     - name: Create yaml header
       local_action: lineinfile
         line="---\n"
-        dest=./{{ ansible_hostname }}/{{ ansible_hostname }}.yml
+        dest=./host_vars/{{ ansible_hostname }}.yml
 
     - name: Add cpu model
       local_action: lineinfile
         line="cpu_model{{':'}} '{{ ansible_processor[1] }}'"
-        dest=./{{ ansible_hostname }}/{{ ansible_hostname }}.yml
+        dest=./host_vars/{{ ansible_hostname }}.yml
 
     - name: Add cpu count
       local_action: lineinfile
         line="cpu_count{{':'}} {{ ansible_processor_count }}"
-        dest=./{{ ansible_hostname }}/{{ ansible_hostname }}.yml
+        dest=./host_vars/{{ ansible_hostname }}.yml
 
     - name: Add cores per cpu
       local_action: lineinfile
         line="cores_per_cpu{{':'}} {{ ansible_processor_cores }}"
-        dest=./{{ ansible_hostname }}/{{ ansible_hostname }}.yml
+        dest=./host_vars/{{ ansible_hostname }}.yml
 
     - name: Add total memory (mb)
       local_action: lineinfile
         line="total_memory_mb{{':'}} {{ ansible_memtotal_mb }}"
-        dest=./{{ ansible_hostname }}/{{ ansible_hostname }}.yml
+        dest=./host_vars/{{ ansible_hostname }}.yml
 
     - name: Add virtualization type
       local_action: lineinfile
         line="virtualization_type{{':'}} '{{ ansible_virtualization_type }}'"
-        dest=./{{ ansible_hostname }}/{{ ansible_hostname }}.yml
+        dest=./host_vars/{{ ansible_hostname }}.yml
 
     - name: Add IPv4 addresses declaration
       local_action: lineinfile
         line="ipv4_addresses{{':'}}"
-        dest=./{{ ansible_hostname }}/{{ ansible_hostname }}.yml
+        dest=./host_vars/{{ ansible_hostname }}.yml
         
     - name: Add IPv4 addresses declaration
       local_action: lineinfile
         line="                - \"{{ item }}\""
-        dest=./{{ ansible_hostname }}/{{ ansible_hostname }}.yml
+        dest=./host_vars/{{ ansible_hostname }}.yml
       with_items: ansible_all_ipv4_addresses
 
     - name: Add IPv6 addresses declaration
       local_action: lineinfile
         line="ipv6_addresses{{':'}}"
-        dest=./{{ ansible_hostname }}/{{ ansible_hostname }}.yml
+        dest=./host_vars/{{ ansible_hostname }}.yml
         
     - name: Add IPv6 addresses declaration
       local_action: lineinfile
         line="                - \"{{ item }}\""
-        dest=./{{ ansible_hostname }}/{{ ansible_hostname }}.yml
+        dest=./host_vars/{{ ansible_hostname }}.yml
       with_items: ansible_all_ipv6_addresses
 
     - name: Add system architecture
       local_action: lineinfile
         line="system_architecture{{':'}} '{{ ansible_architecture }}'"
-        dest=./{{ ansible_hostname }}/{{ ansible_hostname }}.yml
+        dest=./host_vars/{{ ansible_hostname }}.yml
 
     - name: Add linux distribution
       local_action: lineinfile
         line="linux_distribution{{':'}} '{{ ansible_distribution }}'"
-        dest=./{{ ansible_hostname }}/{{ ansible_hostname }}.yml
+        dest=./host_vars/{{ ansible_hostname }}.yml
 
     - name: Add distribution version
       local_action: lineinfile
         line="distribution_version{{':'}} '{{ ansible_distribution_version }}'"
-        dest=./{{ ansible_hostname }}/{{ ansible_hostname }}.yml
+        dest=./host_vars/{{ ansible_hostname }}.yml
 
     - name: Add FQDN
       local_action: lineinfile
         line="fqdn{{':'}} '{{ ansible_fqdn }}'"
-        dest=./{{ ansible_hostname }}/{{ ansible_hostname }}.yml
+        dest=./host_vars/{{ ansible_hostname }}.yml
 
     - name: Add selinux
       local_action: lineinfile
         line="selinux_status{{':'}} '{{ ansible_selinux.status }}'"
-        dest=./{{ ansible_hostname }}/{{ ansible_hostname }}.yml
+        dest=./host_vars/{{ ansible_hostname }}.yml

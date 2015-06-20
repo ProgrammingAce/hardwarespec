@@ -7,7 +7,7 @@ Hardwarespec requires Ansible to be installed, and uses standard Ansible convent
 ##Describing a server
 Servers can be described either individually or in groups. Settings for individual servers override the settings from any group they're in.
 
-##Automatic generation
+###Automatic spec generation
 You can automatically generate a hardware spec of an existing server by running the command below. Assuming your hosts are in your inventory file and you have SSH keys setup, run the checks with this command:
 > ansible-playbook -i inventory generate_spec.yml
 

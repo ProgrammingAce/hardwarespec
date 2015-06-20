@@ -1,0 +1,18 @@
+---
+
+cpu_model: "Intel(R) Core(TM) M-5Y51 CPU @ 1.10GHz"
+cpu_count: 1
+cores_per_cpu: 1
+total_memory_mb: 490
+virtualization_type: "virtualbox"
+ipv4_addresses: 
+                - "10.0.2.15"
+                - "192.168.33.102"
+ipv6_addresses: 
+                - "fe80::a00:27ff:fef6:a1d3"
+                - "fe80::a00:27ff:fe45:858d"
+system_architecture: "x86_64"
+linux_distribution: "CentOS"
+distribution_version: "6.6"
+fqdn: "testing.example.com"
+selinux_status: "disabled"

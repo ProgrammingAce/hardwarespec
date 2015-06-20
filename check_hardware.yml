@@ -1,0 +1,108 @@
+---
+
+- hosts: all
+  sudo: no
+  gather_facts: yes
+  tasks:
+    - name: Check CPU model
+      fail:
+        msg="CPU model '{{ ansible_processor[1] }}' does not match expected value '{{ cpu_model }}'"
+      when: cpu_model is defined and
+            ansible_processor[1] != cpu_model
+            
+    - name: Check CPU count
+      fail:
+        msg="CPU count '{{ ansible_processor_count }}' does not match expected value '{{ cpu_count }}'"
+      when: cpu_count is defined and
+            ansible_processor_count != cpu_count
+            
+    - name: Check cores per cpu
+      fail:
+        msg="Cores per CPU '{{ ansible_processor_cores }}' does not match expected value '{{ cores_per_cpu }}'"
+      when: cores_per_cpu is defined and
+            ansible_processor_cores != cores_per_cpu
+
+    - name: Check virtualization type
+      fail:
+        msg="Virtualization type '{{ ansible_virtualization_type }}' does not match expected value '{{ virtualization_type }}'"
+      when: virtualization_type is defined and
+            ansible_virtualization_type != virtualization_type
+
+    - name: Check IPv4 addresses
+      fail:
+        msg="IPv4 addresses '{{ ansible_all_ipv4_addresses }}' do not match expected value '{{ ipv4_addresses }}'"
+      when: ipv4_addresses is defined and
+            (ansible_all_ipv4_addresses|symmetric_difference(ipv4_addresses))
+
+    - name: Check IPv6 addresses
+      fail:
+        msg="IPv6 addresses '{{ ansible_all_ipv6_addresses }}' do not match expected value '{{ ipv6_addresses }}'"
+      when: ipv6_addresses is defined and
+            (ansible_all_ipv6_addresses|symmetric_difference(ipv6_addresses))
+
+    - name: Check system architecture
+      fail:
+        msg="System architecture '{{ ansible_architecture }}' does not match expected value '{{ system_architecture }}'"
+      when: system_architecture is defined and
+            ansible_architecture != system_architecture
+
+    - name: Check linux distribution
+      fail:
+        msg="Linux distribution '{{ ansible_distribution }}' does not match expected value '{{ linux_distribution }}'"
+      when: linux_distribution is defined and
+            ansible_distribution != linux_distribution 
+
+    - name: Check distribution version
+      fail:
+        msg="Distribution version '{{ ansible_distribution_version }}' does not match expected value '{{ distribution_version }}'"
+      when: distribution_version is defined and
+            ansible_distribution_version!= distribution_version
+
+    - name: Check FQDN
+      fail:
+        msg="FQDN '{{ ansible_fqdn}}' does not match expected value '{{ fqdn }}'"
+      when: fqdn is defined and
+            ansible_fqdn != fqdn
+
+    - name: Check selinux
+      fail:
+        msg="selinux status '{{ ansible_selinux.status }}' does not match expected value '{{ selinux_status }}'"
+      when: selinux_status is defined and
+            ansible_selinux.status != selinux_status
+
+    - name: Check total memory (mb)
+      fail:
+        msg="Total memory (mb) '{{ ansible_memtotal_mb }}' does not match expected value '{{ total_memory_mb }}'"
+      when: total_memory_mb is defined and
+            ansible_memtotal_mb != total_memory_mb
+
+#    - name: print ansible facts
+#      lineinfile:
+#        line="ansible_memtotal_mb {{ ansible_memtotal_mb }}"
+#        dest=/tmp/hostinfo.txt
+#        create=yes
+#
+#    - name: get hard drive facts
+#      shell: df -h
+#      register: hard_drives
+#
+#    - name: print hard drive facts
+#      lineinfile:
+#        line="hard_drive {{ hard_drives.stdout }}"
+#        dest=/tmp/hostinfo.txt
+#        create=yes
+#
+#    - name: Fetch hostinfo.txt file
+#      fetch:
+#        src=/tmp/hostinfo.txt
+#        dest=./
+#
+#    - debug:
+#        var=hostvars[inventory_hostname]
+#      register: all_facts
+#
+#    - shell: "echo {{ all_facts|to_json }} > /tmp/all_facts.json"
+#
+#    - fetch:
+#        src=/tmp/all_facts.json
+#        dest=./

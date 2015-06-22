@@ -4,6 +4,11 @@
   sudo: no
   gather_facts: yes
   tasks:
+    - name : Create host_vars folder
+      local_action: file
+        path=./host_vars
+        state=directory
+
     - name: Destroy exsting spec file
       local_action: file
         path=./host_vars/{{ ansible_fqdn }}.yml

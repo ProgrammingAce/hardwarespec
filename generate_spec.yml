@@ -91,7 +91,14 @@
         line="fqdn{{':'}} '{{ ansible_fqdn }}'"
         dest=./host_vars/{{ inventory_hostname }}.yml
 
-    - name: Add selinux
+    - name: Add selinux (when installed)
       local_action: lineinfile
         line="selinux_status{{':'}} '{{ ansible_selinux.status }}'"
         dest=./host_vars/{{ inventory_hostname }}.yml
+      when: ansible_selinux.status is defined
+
+    - name: Add selinux (not installed)
+      local_action: lineinfile
+        line="selinux_status{{':'}} 'N/A'"
+        dest=./host_vars/{{ inventory_hostname }}.yml
+      when: ansible_selinux.status is not defined

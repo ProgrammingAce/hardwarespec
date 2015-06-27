@@ -44,6 +44,11 @@
         line="total_memory_mb{{':'}} {{ ansible_memtotal_mb }}"
         dest=./host_vars/{{ inventory_hostname }}.yml
 
+    - name: Add total swap space (mb)
+      local_action: lineinfile
+        line="total_swap_mb{{':'}} {{ ansible_swaptotal_mb }}"
+        dest=./host_vars/{{ inventory_hostname }}.yml
+
     - name: Add virtualization type
       local_action: lineinfile
         line="virtualization_type{{':'}} '{{ ansible_virtualization_type }}'"

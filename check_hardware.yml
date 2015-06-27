@@ -27,8 +27,14 @@
         msg="Total memory (mb) '{{ ansible_memtotal_mb }}' does not match expected value '{{ total_memory_mb }}'"
       when: total_memory_mb is defined and
             ansible_memtotal_mb != total_memory_mb
-    - name: Check virtualization type
 
+    - name: Check total memory (mb)
+      fail:
+        msg="Total swap (mb) '{{ ansible_swaptotal_mb }}' does not match expected value '{{ total_swap_mb }}'"
+      when: total_swap_mb is defined and
+            ansible_swaptotal_mb != total_swap_mb
+    
+    - name: Check virtualization type
       fail:
         msg="Virtualization type '{{ ansible_virtualization_type }}' does not match expected value '{{ virtualization_type }}'"
       when: virtualization_type is defined and

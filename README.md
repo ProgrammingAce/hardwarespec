@@ -30,6 +30,7 @@ cpu_model
 cpu_count
 cores_per_cpu
 total_memory_mb
+total_swap_mb
 virtualization_type
 ipv4_addresses
 ipv6_addresses

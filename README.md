@@ -9,7 +9,9 @@ Servers can be described either individually or in groups. Settings for individu
 
 ###Automatic spec generation
 You can automatically generate a hardware spec of an existing server by running the command below. Assuming your hosts are in your inventory file and you have SSH keys setup, run the checks with this command:
-> ansible-playbook -i inventory generate_spec.yml
+```
+ansible-playbook -i inventory generate_spec.yml -u <user>
+```
 
 This generates a yaml configuration file for each server and automatically puts it in the 'host_vars' folder.
 
@@ -43,7 +45,13 @@ selinux_status
 
 ##Running the tests
 The tests are run through ansible using the check_hardware playbook. Assuming your hosts are in your inventory file and you have SSH keys setup, run the checks with this command:
-> ansible-playbook -i inventory check_hardware.yml
+
+```
+ansible-playbook -i inventory check_hardware.yml -u <user>
+```
 
 If you only want to check a specific group (like 'dev') you can add the -l flag
-> ansible-playbook -i inventory check_hardware.yml -l dev
+
+```
+ansible-playbook -i inventory check_hardware.yml -l dev -u <user>
+```

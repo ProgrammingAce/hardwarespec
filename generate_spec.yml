@@ -44,6 +44,11 @@
         line="total_memory_mb{{':'}} {{ ansible_memtotal_mb }}"
         dest=./host_vars/{{ inventory_hostname }}.yml
 
+    - name: Add free memory (mb)
+      local_action: lineinfile
+        line="free_memory_mb{{':'}} {{ ansible_memfree_mb }}"
+        dest=./host_vars/{{ inventory_hostname }}.yml
+
     - name: Add total swap space (mb)
       local_action: lineinfile
         line="total_swap_mb{{':'}} {{ ansible_swaptotal_mb }}"
@@ -107,3 +112,55 @@
         line="selinux_status{{':'}} 'N/A'"
         dest=./host_vars/{{ inventory_hostname }}.yml
       when: ansible_selinux.status is not defined
+
+    - name: Get CPU performance stats
+      shell: echo '2^2^21' | { /usr/bin/time -f '%e' bc > /dev/null ;} 2>&1
+      ignore_errors: yes
+      register: cpu_performance
+ 
+    - name: Add CPU performance stats
+      local_action: lineinfile
+        line="cpu_performance{{':'}} '{{ cpu_performance.stdout }}'"
+        dest=./host_vars/{{ inventory_hostname }}.yml
+      when: cpu_performance|succeeded
+
+    - name: Add CPU performance stats
+      local_action: lineinfile
+        line="cpu_performance{{':'}} 'N/A'"
+        dest=./host_vars/{{ inventory_hostname }}.yml
+      when: cpu_performance|failed
+
+    - name: Get bandwidth stats
+      shell: speedtest --simple
+      register: network_performance
+
+    - name: Add bandwidth stats
+      local_action: lineinfile
+        line="{{ network_performance.stdout }}"
+        dest=./host_vars/{{ inventory_hostname }}.yml
+      when: network_performance|succeeded
+
+    - name: Add CPU performance stats
+      local_action: lineinfile
+        line="Ping{{':'}} 'N/A'\nDownload{{':'}} 'N/A'\nUpload{{':'}} 'N/A'"
+        dest=./host_vars/{{ inventory_hostname }}.yml
+      when: network_performance|failed
+
+    - name: Get CPU utilization
+      shell: top -b -n2 -p 1 | fgrep "Cpu(s)" | tail -1 | awk -F'id,' -v prefix="$prefix" '{ split($1, vs, ","); v=vs[length(vs)]; sub("%", "", v); printf "%s%.1f%%\n", prefix, 100 - v }'
+      register: cpu_utilization
+ 
+    - name: Add CPU utilization
+      local_action: lineinfile
+        line="cpu_utilization{{':'}} '{{ cpu_utilization.stdout }}'"
+        dest=./host_vars/{{ inventory_hostname }}.yml
+
+    - name: Get outstanding security updates 
+      shell: /usr/bin/yum --debuglevel 2 --security check-update 2>/dev/null | head -n 2 | tail -n 1 | awk '{ print $1 }'
+      register: security_patches
+ 
+    - name: Add outstanding security patches
+      local_action: lineinfile
+        line="security_patches{{':'}} '{{ security_patches.stdout }}'"
+        dest=./host_vars/{{ inventory_hostname }}.yml
+

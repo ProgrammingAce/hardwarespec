@@ -1,7 +1,7 @@
 ---
 
 - hosts: all
-  sudo: no
+  becomes: no
   gather_facts: yes
   tasks:
     - name : Create host_vars folder

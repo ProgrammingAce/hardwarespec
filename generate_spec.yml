@@ -132,6 +132,7 @@
 
     - name: Get bandwidth stats
       shell: speedtest --simple
+      ignore_errors: yes
       register: network_performance
 
     - name: Add bandwidth stats
@@ -140,7 +141,7 @@
         dest=./host_vars/{{ inventory_hostname }}.yml
       when: network_performance|succeeded
 
-    - name: Add CPU performance stats
+    - name: Add bandwidth stats
       local_action: lineinfile
         line="Ping{{':'}} 'N/A'\nDownload{{':'}} 'N/A'\nUpload{{':'}} 'N/A'"
         dest=./host_vars/{{ inventory_hostname }}.yml
@@ -148,19 +149,35 @@
 
     - name: Get CPU utilization
       shell: top -b -n2 -p 1 | fgrep "Cpu(s)" | tail -1 | awk -F'id,' -v prefix="$prefix" '{ split($1, vs, ","); v=vs[length(vs)]; sub("%", "", v); printf "%s%.1f%%\n", prefix, 100 - v }'
+      ignore_errors: yes
       register: cpu_utilization
  
     - name: Add CPU utilization
       local_action: lineinfile
         line="cpu_utilization{{':'}} '{{ cpu_utilization.stdout }}'"
         dest=./host_vars/{{ inventory_hostname }}.yml
+      when: cpu_utilization|succeeded
+
+    - name: Add CPU utilization
+      local_action: lineinfile
+        line="cpu_utilization{{':'}} 'N/A'"
+        dest=./host_vars/{{ inventory_hostname }}.yml
+      when: cpu_utilization|failed
 
     - name: Get outstanding security updates 
       shell: /usr/bin/yum --debuglevel 2 --security check-update 2>/dev/null | head -n 2 | tail -n 1 | awk '{ print $1 }'
+      ignore_errors: yes
       register: security_patches
  
     - name: Add outstanding security patches
       local_action: lineinfile
         line="security_patches{{':'}} '{{ security_patches.stdout }}'"
         dest=./host_vars/{{ inventory_hostname }}.yml
+      when: security_patches|succeeded
+
+    - name: Add outstanding security patches
+      local_action: lineinfile
+        line="security_patches{{':'}} 'N/A'"
+        dest=./host_vars/{{ inventory_hostname }}.yml
+      when: security_patches|failed
 
